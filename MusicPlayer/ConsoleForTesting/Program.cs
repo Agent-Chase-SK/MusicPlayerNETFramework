@@ -1,7 +1,8 @@
 ﻿using MusicPlayerAPI;
+using MusicPlayerAPI.Players;
+using MusicPlayerAPI.SongList;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace ConsoleForTesting
 {
@@ -14,7 +15,7 @@ namespace ConsoleForTesting
 
         private static void Loop()
         {
-            MusicPlayerHandler musicPlayer = new MusicPlayerHandler();
+            MusicPlayerHandler musicPlayer = new MusicPlayerHandler(new NAudioPlayer(), new SimpleRecursiveSongList());
             Console.WriteLine("Folder path:");
             string path = Console.ReadLine();
             musicPlayer.LoadSongs(path);

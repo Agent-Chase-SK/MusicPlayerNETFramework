@@ -28,15 +28,11 @@ namespace MusicPlayerAPI
         public event EventHandler ActiveSongCahnged;
         public event EventHandler PlayerStatusCahnged;
 
-        public MusicPlayerHandler(IPlayer player = null, ISongList songList = null)
+        public MusicPlayerHandler(IPlayer player, ISongList songList)
         {
-            if (player == null)
+            if (player == null || songList == null)
             {
-                player = new NAudioPlayer();
-            }
-            if (songList == null)
-            {
-                songList = new SimpleRecursiveSongList();
+                throw new ArgumentException("Must provide implementations");
             }
             _player = player;
             _songList = songList;
