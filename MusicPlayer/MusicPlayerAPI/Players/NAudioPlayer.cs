@@ -138,7 +138,7 @@ namespace MusicPlayerAPI.Players
             }
         }
 
-        private void OnStatusChanged() => StatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(ToPlayBackStatus(_audioOutput.PlaybackState));
+        private void OnStatusChanged() => StatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(ToPlayBackStatus(_audioOutput.PlaybackState)));
 
         private PlayBackStatus ToPlayBackStatus(NAudio.Wave.PlaybackState state)
         {
