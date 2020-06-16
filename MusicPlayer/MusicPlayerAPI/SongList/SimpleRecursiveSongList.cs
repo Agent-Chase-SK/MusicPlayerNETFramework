@@ -12,7 +12,7 @@ namespace MusicPlayerAPI.SongList
     {
         private SongListStatus _status;
         private IDictionary<string, string> _songList;
-        private IExtensionChecker _extensionChecker = new WavMp3();
+        private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
         public SongListStatus Status
         {

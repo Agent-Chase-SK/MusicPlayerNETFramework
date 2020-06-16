@@ -9,7 +9,7 @@ namespace MusicPlayerAPI.Players
     {
         private NAudio.Wave.BlockAlignReductionStream _stream;
         private NAudio.Wave.WaveOut _audioOutput;
-        private IExtensionChecker _extensionChecker = new WavMp3();
+        private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
         public event EventHandler StatusChanged;
 
