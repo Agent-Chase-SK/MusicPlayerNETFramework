@@ -1,4 +1,8 @@
-﻿using System;
+﻿using MusicPlayerAPI.Players;
+using MusicPlayerAPI.SongList;
+using Prism.Ioc;
+using Prism.Unity;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -11,7 +15,17 @@ namespace Shell
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : PrismApplication
     {
+        protected override Window CreateShell()
+        {
+            return Container.Resolve<ShellWindow>();
+        }
+
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterSingleton<IPlayer, NAudioPlayer>();
+            containerRegistry.RegisterSingleton<ISongList, SimpleRecursiveSongList>();
+        }
     }
 }
