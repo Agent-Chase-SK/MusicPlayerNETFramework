@@ -1,0 +1,84 @@
+﻿using MusicPlayerAPI.Util;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Text.RegularExpressions;
+
+namespace MusicPlayerAPI.SongList
+{
+    public class SimpleRecursiveSongList : ISongList
+    {
+        private SongListStatus _status;
+        private IDictionary<string, string> _songList;
+        private readonly ExtensionValidation IsExtensionCompatibile = PathChecker.IsWavOrMp3;
+
+        public SongListStatus Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                OnStatusChanged();
+            }
+        }
+
+        public event EventHandler StatusChanged;
+
+        private delegate bool ExtensionValidation(string path);
+
+        public SimpleRecursiveSongList() => Status = SongListStatus.NoSelectedFolder;
+
+        public IDictionary<string, string> GetSongs()
+        {
+            if (_songList == null)
+            {
+                throw new InvalidOperationException("No songs Loaded");
+            }
+            return _songList.ToImmutableDictionary();
+        }
+
+        public bool LoadSongs(string path)
+        {
+            if (!PathChecker.IsPathValid(path))
+            {
+                return false;
+            }
+            Status = SongListStatus.Loading;
+            if (_songList == null || _songList.Count != 0)
+            {
+                _songList = new Dictionary<string, string>();
+            }
+            try
+            {
+                RecDirSearch(path);
+            }
+            catch (Exception)
+            {
+                _songList = null;
+                Status = SongListStatus.NoSelectedFolder;
+                return false;
+            }
+            Status = SongListStatus.Loaded;
+            return true;
+        }
+
+        private void RecDirSearch(string dirPath)
+        {
+            foreach (string file in Directory.GetFiles(dirPath))
+            {
+                if (IsExtensionCompatibile(file))
+                {
+                    string title = Regex.Replace(Path.GetFileNameWithoutExtension(file), @"[^\u0000-\u007F]+", string.Empty);
+                    _songList.Add(title, file);
+                }
+            }
+            foreach (string dir in Directory.GetDirectories(dirPath))
+            {
+                RecDirSearch(dir);
+            }
+        }
+
+        private void OnStatusChanged() => StatusChanged?.Invoke(this, new ListStatusChangedEventArgs(Status));
+    }
+}
