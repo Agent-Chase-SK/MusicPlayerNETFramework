@@ -1,4 +1,5 @@
 ﻿using MusicPlayerAPI.Util;
+using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,7 +12,7 @@ namespace MusicPlayerAPI.SongList
     {
         private SongListStatus _status;
         private IDictionary<string, string> _songList;
-        private readonly ExtensionValidation IsExtensionCompatibile = PathChecker.IsWavOrMp3;
+        private IExtensionChecker _extensionChecker = new WavMp3();
 
         public SongListStatus Status
         {
@@ -24,8 +25,6 @@ namespace MusicPlayerAPI.SongList
         }
 
         public event EventHandler StatusChanged;
-
-        private delegate bool ExtensionValidation(string path);
 
         public SimpleRecursiveSongList() => Status = SongListStatus.NoSelectedFolder;
 
@@ -67,7 +66,7 @@ namespace MusicPlayerAPI.SongList
         {
             foreach (string file in Directory.GetFiles(dirPath))
             {
-                if (IsExtensionCompatibile(file))
+                if (_extensionChecker.IsSupportedExtension(file))
                 {
                     string title = Regex.Replace(Path.GetFileNameWithoutExtension(file), @"[^\u0000-\u007F]+", string.Empty);
                     _songList.Add(title, file);
