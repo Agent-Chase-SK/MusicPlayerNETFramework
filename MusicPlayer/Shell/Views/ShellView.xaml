@@ -10,5 +10,5 @@
         mc:Ignorable="d"
         Title="ShellView" Height="450" Width="800">
 
-    <ContentControl prism:RegionManager.RegionName="{x:Static shell:Regions.MainRegion}"/>
+    <ContentControl prism:RegionManager.RegionName="{x:Static shell:Regions.MainRegion}" />
 </Window>

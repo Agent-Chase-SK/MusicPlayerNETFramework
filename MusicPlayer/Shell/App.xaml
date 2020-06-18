@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:Shell"
              xmlns:prism="http://prismlibrary.com/">
     <prism:PrismApplication.Resources>
-         
     </prism:PrismApplication.Resources>
 </prism:PrismApplication>
