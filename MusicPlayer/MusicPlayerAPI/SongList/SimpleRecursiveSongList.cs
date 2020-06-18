@@ -14,10 +14,10 @@ namespace MusicPlayerAPI.SongList
         private IDictionary<string, string> _songList;
         private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
-        private SongListStatus Status
+        public SongListStatus Status
         {
             get => _status;
-            set
+            private set
             {
                 _status = value;
                 OnStatusChanged();

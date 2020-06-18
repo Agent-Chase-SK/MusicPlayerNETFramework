@@ -29,6 +29,16 @@ namespace MusicPlayerAPI
             get => _songList.Songs.Keys.OrderBy(key => key).ToList();
         }
 
+        public SongListStatus ListStatus
+        {
+            get => _songList.Status;
+        }
+
+        public PlayBackStatus PlayerStatus
+        {
+            get => _player.Status;
+        }
+
         public int Volume
         {
             get => IntVolume.ToIntVolume(_player.Volume);

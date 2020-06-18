@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MusicPlayerAPI.Players;
+using MusicPlayerAPI.SongList;
+using System;
 using System.Collections.Generic;
 
 namespace MusicPlayerAPI
@@ -8,6 +10,10 @@ namespace MusicPlayerAPI
         string ActiveSong { get; }
 
         IList<string> Songs { get; }
+
+        SongListStatus ListStatus { get; }
+
+        PlayBackStatus PlayerStatus { get; }
 
         int Volume { get; set; }
 

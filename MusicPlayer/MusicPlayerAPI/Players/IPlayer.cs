@@ -8,6 +8,8 @@ namespace MusicPlayerAPI.Players
 
         string[] SupportedExtensions { get; }
 
+        PlayBackStatus Status { get; }
+
         event EventHandler StatusChanged;
 
         bool LoadMusicFile(string path);

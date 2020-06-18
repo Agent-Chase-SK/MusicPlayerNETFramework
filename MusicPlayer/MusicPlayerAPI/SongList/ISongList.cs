@@ -9,6 +9,8 @@ namespace MusicPlayerAPI.SongList
 
         string[] SupportedExtensions { get; }
 
+        SongListStatus Status { get; }
+
         event EventHandler StatusChanged;
 
         bool LoadSongs(string path);

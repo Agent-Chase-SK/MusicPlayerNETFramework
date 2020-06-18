@@ -47,6 +47,11 @@ namespace MusicPlayerAPI.Players
             }
         }
 
+        public PlayBackStatus Status
+        {
+            get => ToPlayBackStatus(AudioOutput.PlaybackState);
+        }
+
         public string[] SupportedExtensions
         {
             get => _extensionChecker.GetSuportedExtensions();
