@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MusicPlayerModule
+namespace MusicPlayerModule.Views
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// Interaction logic for MusicPlayerView.xaml
     /// </summary>
-    public partial class UserControl1 : UserControl
+    public partial class MusicPlayerView : UserControl
     {
-        public UserControl1()
+        public MusicPlayerView()
         {
             InitializeComponent();
         }
