@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Shell
+namespace Shell.Views
 {
     /// <summary>
-    /// Interaction logic for ShellWindow.xaml
+    /// Interaction logic for ShellView.xaml
     /// </summary>
-    public partial class ShellWindow : Window
+    public partial class ShellView : Window
     {
-        public ShellWindow()
+        public ShellView()
         {
             InitializeComponent();
         }

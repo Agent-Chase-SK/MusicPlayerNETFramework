@@ -1,12 +1,14 @@
-﻿<Window x:Class="Shell.ShellWindow"
+﻿<Window x:Class="Shell.Views.ShellView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Shell"
         xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:local="clr-namespace:Shell.Views"
+        xmlns:shell="clr-namespace:Shell"
         mc:Ignorable="d"
-        Title="ShellWindow" Height="450" Width="800">
+        Title="ShellView" Height="450" Width="800">
 
-    <ContentControl prism:RegionManager.RegionName="MainRegion"/>
+    <ContentControl prism:RegionManager.RegionName="{x:Static shell:Regions.MainRegion}"/>
 </Window>
