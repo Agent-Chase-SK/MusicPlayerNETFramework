@@ -4,6 +4,10 @@ namespace MusicPlayerAPI.Players
 {
     public interface IPlayer : IDisposable
     {
+        float Volume { get; set; }
+
+        string[] SupportedExtensions { get; }
+
         event EventHandler StatusChanged;
 
         bool LoadMusicFile(string path);
@@ -13,11 +17,5 @@ namespace MusicPlayerAPI.Players
         void Pause();
 
         void Stop();
-
-        float GetVolume();
-
-        void SetVolume(float volume);
-
-        string[] GetSupportedExtensions();
     }
 }

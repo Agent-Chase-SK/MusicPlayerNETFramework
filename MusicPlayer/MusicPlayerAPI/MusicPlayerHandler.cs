@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace MusicPlayerAPI
 {
-    public class MusicPlayerHandler : IDisposable
+    public class MusicPlayerHandler : IMusicPlayerHandler
     {
         private readonly IPlayer _player;
         private readonly ISongList _songList;
@@ -24,15 +24,37 @@ namespace MusicPlayerAPI
             }
         }
 
+        public IList<string> Songs
+        {
+            get => _songList.Songs.Keys.OrderBy(key => key).ToList();
+        }
+
+        public int Volume
+        {
+            get => IntVolume.ToIntVolume(_player.Volume);
+            set => _player.Volume = IntVolume.FromIntVolume(value);
+        }
+
+        public string[] SupportedExtensions
+        {
+            get => _player.SupportedExtensions;
+        }
+
         public event EventHandler ListStatusChanged;
-        public event EventHandler ActiveSongCahnged;
-        public event EventHandler PlayerStatusCahnged;
+
+        public event EventHandler PlayerStatusChanged;
+
+        public event EventHandler ActiveSongChanged;
 
         public MusicPlayerHandler(IPlayer player, ISongList songList)
         {
             if (player == null || songList == null)
             {
                 throw new ArgumentException("Must provide implementations");
+            }
+            if (!player.SupportedExtensions.SequenceEqual(songList.SupportedExtensions))
+            {
+                throw new ArgumentException("Implementations incompatibile");
             }
             _player = player;
             _songList = songList;
@@ -59,11 +81,9 @@ namespace MusicPlayerAPI
             }
         }
 
-        public IList<string> GetSongList() => _songList.GetSongs().Keys.OrderBy(keys => keys).ToList();
-
         public void SelectSong(string song)
         {
-            IDictionary<string, string> songList = _songList.GetSongs();
+            IDictionary<string, string> songList = _songList.Songs;
             if (!songList.ContainsKey(song))
             {
                 throw new ArgumentException($"Song: {song} not in list");
@@ -72,6 +92,7 @@ namespace MusicPlayerAPI
             {
                 throw new IOException($"Failed to load song: {song}");
             }
+            ActiveSong = song;
         }
 
         public void Play() => _player.Play();
@@ -79,12 +100,6 @@ namespace MusicPlayerAPI
         public void Pause() => _player.Pause();
 
         public void Stop() => _player.Stop();
-
-        public int GetVolume() => IntVolume.ToIntVolume(_player.GetVolume());
-
-        public void SetVoume(int volume) => _player.SetVolume(IntVolume.FromIntVolume(volume));
-
-        public string[] GetSupportedExtensions() => _player.GetSupportedExtensions();
 
         private void ListStatusChangedDetected(object sender, EventArgs args)
         {
@@ -106,8 +121,8 @@ namespace MusicPlayerAPI
 
         private void OnListStatusChanged(SongListStatus status) => ListStatusChanged?.Invoke(this, new ListStatusChangedEventArgs(status));
 
-        private void OnPlayerStatusChanged(PlayBackStatus status) => ListStatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(status));
+        private void OnPlayerStatusChanged(PlayBackStatus status) => PlayerStatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(status));
 
-        private void OnActiveSongChanged() => ListStatusChanged?.Invoke(this, new SongChangedEventArgs(ActiveSong));
+        private void OnActiveSongChanged() => ActiveSongChanged?.Invoke(this, new SongChangedEventArgs(ActiveSong));
     }
 }

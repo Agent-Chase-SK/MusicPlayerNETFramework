@@ -11,19 +11,60 @@ namespace MusicPlayerAPI.Players
         private NAudio.Wave.WaveOut _audioOutput;
         private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
+        private NAudio.Wave.WaveOut AudioOutput
+        {
+            get => _audioOutput;
+            set
+            {
+                if (_audioOutput != null)
+                {
+                    _audioOutput.PlaybackStopped -= PlaybackStoppedDetected;
+                }
+                _audioOutput = value;
+                if (_audioOutput != null)
+                {
+                    _audioOutput.PlaybackStopped += PlaybackStoppedDetected;
+                }
+            }
+        }
+
+        public float Volume
+        {
+            get
+            {
+                CheckLoadedSong();
+                return AudioOutput.Volume;
+            }
+
+            set
+            {
+                CheckLoadedSong();
+                if (value < 0.0f || value > 1.0f)
+                {
+                    throw new ArgumentException("Volume must be between 0 and 1");
+                }
+                AudioOutput.Volume = value;
+            }
+        }
+
+        public string[] SupportedExtensions
+        {
+            get => _extensionChecker.GetSuportedExtensions();
+        }
+
         public event EventHandler StatusChanged;
 
         public void Dispose()
         {
-            if (_audioOutput != null)
+            if (AudioOutput != null)
             {
-                if (_audioOutput.PlaybackState != NAudio.Wave.PlaybackState.Stopped)
+                if (AudioOutput.PlaybackState != NAudio.Wave.PlaybackState.Stopped)
                 {
-                    _audioOutput.Stop();
+                    AudioOutput.Stop();
                     OnStatusChanged();
                 }
-                _audioOutput.Dispose();
-                _audioOutput = null;
+                AudioOutput.Dispose();
+                AudioOutput = null;
             }
             if (_stream != null)
             {
@@ -32,35 +73,13 @@ namespace MusicPlayerAPI.Players
             }
         }
 
-        public float GetVolume()
-        {
-            if (_audioOutput == null || _stream == null)
-            {
-                throw new InvalidOperationException("No song is loaded");
-            }
-            return _audioOutput.Volume;
-        }
-
-        public void SetVolume(float volume)
-        {
-            if (_audioOutput == null || _stream == null)
-            {
-                throw new InvalidOperationException("No song is loaded");
-            }
-            if (volume < 0.0f || volume > 1.0f)
-            {
-                throw new ArgumentException("Volume must be between 0 and 1");
-            }
-            _audioOutput.Volume = volume;
-        }
-
         public bool LoadMusicFile(string path)
         {
             if (!PathChecker.IsPathValid(path))
             {
                 return false;
             }
-            if (_stream != null || _audioOutput != null)
+            if (_stream != null || AudioOutput != null)
             {
                 Dispose();
             }
@@ -68,7 +87,7 @@ namespace MusicPlayerAPI.Players
             {
                 return false;
             }
-            _audioOutput = new NAudio.Wave.WaveOut
+            AudioOutput = new NAudio.Wave.WaveOut
             {
                 DeviceNumber = -1
             };
@@ -84,7 +103,7 @@ namespace MusicPlayerAPI.Players
                     NAudio.Wave.WaveStream waveStream = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(new NAudio.Wave.Mp3FileReader(path));
                     _stream = new NAudio.Wave.BlockAlignReductionStream(waveStream);
                 }
-                _audioOutput.Init(_stream);
+                AudioOutput.Init(_stream);
             }
             catch (Exception)
             {
@@ -95,50 +114,41 @@ namespace MusicPlayerAPI.Players
 
         public void Pause()
         {
-            if (_audioOutput == null || _stream == null)
+            CheckLoadedSong();
+            if (AudioOutput.PlaybackState == NAudio.Wave.PlaybackState.Playing)
             {
-                throw new InvalidOperationException("No song is loaded");
-            }
-            if (_audioOutput.PlaybackState == NAudio.Wave.PlaybackState.Playing)
-            {
-                _audioOutput.Pause();
+                AudioOutput.Pause();
                 OnStatusChanged();
             }
         }
 
         public void Play()
         {
-            if (_audioOutput == null || _stream == null)
+            CheckLoadedSong();
+            if (AudioOutput.PlaybackState == NAudio.Wave.PlaybackState.Paused)
             {
-                throw new InvalidOperationException("No song is loaded");
-            }
-            if (_audioOutput.PlaybackState == NAudio.Wave.PlaybackState.Paused)
-            {
-                _audioOutput.Resume();
+                AudioOutput.Resume();
                 OnStatusChanged();
             }
-            if (_audioOutput.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
+            if (AudioOutput.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
             {
-                _audioOutput.Play();
+                AudioOutput.Play();
                 OnStatusChanged();
             }
         }
 
         public void Stop()
         {
-            if (_audioOutput == null || _stream == null)
+            CheckLoadedSong();
+            if (AudioOutput.PlaybackState != NAudio.Wave.PlaybackState.Stopped)
             {
-                throw new InvalidOperationException("No song is loaded");
-            }
-            if (_audioOutput.PlaybackState != NAudio.Wave.PlaybackState.Stopped)
-            {
-                _audioOutput.Stop();
+                AudioOutput.Stop();
                 OnStatusChanged();
                 _stream.CurrentTime = TimeSpan.Zero;
             }
         }
 
-        private void OnStatusChanged() => StatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(ToPlayBackStatus(_audioOutput.PlaybackState)));
+        private void OnStatusChanged() => StatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(ToPlayBackStatus(AudioOutput.PlaybackState)));
 
         private PlayBackStatus ToPlayBackStatus(NAudio.Wave.PlaybackState state)
         {
@@ -158,9 +168,17 @@ namespace MusicPlayerAPI.Players
             }
         }
 
-        public string[] GetSupportedExtensions()
+        private void CheckLoadedSong()
         {
-            return _extensionChecker.GetSuportedExtensions();
+            if (AudioOutput == null || _stream == null)
+            {
+                throw new InvalidOperationException("No song is loaded");
+            }
+        }
+
+        private void PlaybackStoppedDetected(object sender, EventArgs args)
+        {
+            OnStatusChanged();
         }
     }
 }

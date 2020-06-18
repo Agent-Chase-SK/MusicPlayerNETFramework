@@ -5,10 +5,12 @@ namespace MusicPlayerAPI.SongList
 {
     public interface ISongList
     {
+        IDictionary<string, string> Songs { get; }
+
+        string[] SupportedExtensions { get; }
+
         event EventHandler StatusChanged;
 
         bool LoadSongs(string path);
-
-        IDictionary<string, string> GetSongs();
     }
 }

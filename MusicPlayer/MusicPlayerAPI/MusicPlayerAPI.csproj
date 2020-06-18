@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMusicPlayerHandler.cs" />
     <Compile Include="Players\PlayBackStatus.cs" />
     <Compile Include="Players\PlayerStatusChangedEventArgs.cs" />
     <Compile Include="SongChangedEventArgs.cs" />

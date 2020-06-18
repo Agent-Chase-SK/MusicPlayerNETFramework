@@ -14,7 +14,7 @@ namespace MusicPlayerAPI.SongList
         private IDictionary<string, string> _songList;
         private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
-        public SongListStatus Status
+        private SongListStatus Status
         {
             get => _status;
             set
@@ -24,18 +24,26 @@ namespace MusicPlayerAPI.SongList
             }
         }
 
+        public IDictionary<string, string> Songs
+        {
+            get
+            {
+                if (_songList == null)
+                {
+                    throw new InvalidOperationException("No songs Loaded");
+                }
+                return _songList.ToImmutableDictionary();
+            }
+        }
+
+        public string[] SupportedExtensions
+        {
+            get => _extensionChecker.GetSuportedExtensions();
+        }
+
         public event EventHandler StatusChanged;
 
         public SimpleRecursiveSongList() => Status = SongListStatus.NoSelectedFolder;
-
-        public IDictionary<string, string> GetSongs()
-        {
-            if (_songList == null)
-            {
-                throw new InvalidOperationException("No songs Loaded");
-            }
-            return _songList.ToImmutableDictionary();
-        }
 
         public bool LoadSongs(string path)
         {
