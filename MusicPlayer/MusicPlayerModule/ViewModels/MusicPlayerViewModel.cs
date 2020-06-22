@@ -4,6 +4,8 @@ using MusicPlayerAPI.SongList;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MusicPlayerModule.ViewModels
@@ -11,18 +13,40 @@ namespace MusicPlayerModule.ViewModels
     class MusicPlayerViewModel : BindableBase, IDisposable
     {
         private readonly MusicPlayerHandler _musicPlayerHandler;
+        private IList<string> _songs;
+        private string _selectedSong = null;
+
+        public IList<string> Songs
+        {
+            get => _songs;
+            set => SetProperty(ref _songs, value);
+        }
+
+        public string SelectedSong
+        {
+            get => _selectedSong;
+            set => SetProperty(ref _selectedSong, value);
+        }
 
         public DelegateCommand SelectFolderCommand { get; set; }
+
+        public DelegateCommand SelectSongCommand { get; set; }
 
         public MusicPlayerViewModel(IPlayer player, ISongList songList)
         {
             _musicPlayerHandler = new MusicPlayerHandler(player, songList);
 
-            SelectFolderCommand = new DelegateCommand(SelectFolderExecute, SelectFolderCanExecute).ObservesProperty(() => Tmp);
+            _musicPlayerHandler.ListStatusChanged += ListStatusChangedDetected;
+
+            Songs = _musicPlayerHandler.Songs;
+
+            SelectFolderCommand = new DelegateCommand(SelectFolderExecute, SelectFolderCanExecute);
+            SelectSongCommand = new DelegateCommand(SelectSongExecute, SelectSongCanExecute).ObservesProperty(() => SelectedSong);
         }
 
         public void Dispose()
         {
+            _musicPlayerHandler.ListStatusChanged -= ListStatusChangedDetected;
             _musicPlayerHandler.Dispose();
         }
 
@@ -34,7 +58,8 @@ namespace MusicPlayerModule.ViewModels
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
                 {
-                    Tmp = dialog.SelectedPath; //TMP
+                    _musicPlayerHandler.LoadSongs(dialog.SelectedPath);
+                    Songs = _musicPlayerHandler.Songs;
                 }
             }
         }
@@ -44,12 +69,19 @@ namespace MusicPlayerModule.ViewModels
             return _musicPlayerHandler.ListStatus != SongListStatus.Loading;
         }
 
-        //TMP
-        private string tmp = "";
-        public string Tmp
+        private void SelectSongExecute()
         {
-            get => tmp;
-            set => SetProperty(ref tmp, value);
+            _musicPlayerHandler.ActiveSong = SelectedSong;
+        }
+
+        private bool SelectSongCanExecute()
+        {
+            return SelectedSong != null;
+        }
+
+        private void ListStatusChangedDetected(object sender, EventArgs args)
+        {
+            SelectFolderCommand.RaiseCanExecuteChanged();
         }
     }
 }
