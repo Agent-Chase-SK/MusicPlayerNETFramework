@@ -19,7 +19,7 @@ namespace MusicPlayerAPI
             get => _activeSong;
             set
             {
-                _activeSong = value;
+                SelectSong(value);
                 OnActiveSongChanged();
             }
         }
@@ -91,7 +91,13 @@ namespace MusicPlayerAPI
             }
         }
 
-        public void SelectSong(string song)
+        public void Play() => _player.Play();
+
+        public void Pause() => _player.Pause();
+
+        public void Stop() => _player.Stop();
+
+        private void SelectSong(string song)
         {
             IDictionary<string, string> songList = _songList.Songs;
             if (!songList.ContainsKey(song))
@@ -102,14 +108,8 @@ namespace MusicPlayerAPI
             {
                 throw new IOException($"Failed to load song: {song}");
             }
-            ActiveSong = song;
+            _activeSong = song;
         }
-
-        public void Play() => _player.Play();
-
-        public void Pause() => _player.Pause();
-
-        public void Stop() => _player.Stop();
 
         private void ListStatusChangedDetected(object sender, EventArgs args)
         {

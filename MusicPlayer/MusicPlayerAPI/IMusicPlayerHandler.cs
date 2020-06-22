@@ -7,7 +7,7 @@ namespace MusicPlayerAPI
 {
     internal interface IMusicPlayerHandler : IDisposable
     {
-        string ActiveSong { get; }
+        string ActiveSong { get; set; }
 
         IList<string> Songs { get; }
 
@@ -26,8 +26,6 @@ namespace MusicPlayerAPI
         event EventHandler ActiveSongChanged;
 
         void LoadSongs(string path);
-
-        void SelectSong(string song);
 
         void Play();
 
