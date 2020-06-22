@@ -11,7 +11,7 @@ namespace MusicPlayerAPI.SongList
     public class SimpleRecursiveSongList : ISongList
     {
         private SongListStatus _status;
-        private IDictionary<string, string> _songList;
+        private IDictionary<string, string> _songList = new Dictionary<string, string>();
         private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
         public SongListStatus Status
@@ -26,14 +26,7 @@ namespace MusicPlayerAPI.SongList
 
         public IDictionary<string, string> Songs
         {
-            get
-            {
-                if (_songList == null)
-                {
-                    throw new InvalidOperationException("No songs Loaded");
-                }
-                return _songList.ToImmutableDictionary();
-            }
+            get => _songList.ToImmutableDictionary();
         }
 
         public string[] SupportedExtensions
@@ -52,7 +45,7 @@ namespace MusicPlayerAPI.SongList
                 return false;
             }
             Status = SongListStatus.Loading;
-            if (_songList == null || _songList.Count != 0)
+            if (_songList.Count != 0)
             {
                 _songList = new Dictionary<string, string>();
             }
@@ -62,7 +55,7 @@ namespace MusicPlayerAPI.SongList
             }
             catch (Exception)
             {
-                _songList = null;
+                _songList = new Dictionary<string, string>();
                 Status = SongListStatus.NoSelectedFolder;
                 return false;
             }

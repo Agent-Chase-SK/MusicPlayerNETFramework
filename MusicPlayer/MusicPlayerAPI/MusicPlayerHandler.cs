@@ -26,17 +26,7 @@ namespace MusicPlayerAPI
 
         public IList<string> Songs
         {
-            get
-            {
-                try
-                {
-                    return _songList.Songs.Keys.OrderBy(key => key).ToList();
-                }
-                catch (InvalidOperationException)
-                {
-                    return new List<string>();
-                }
-            }
+            get => _songList.Songs.Keys.OrderBy(key => key).ToList();
         }
 
         public SongListStatus ListStatus
