@@ -6,15 +6,17 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace MusicPlayerModule.ViewModels
 {
     class MusicPlayerViewModel : BindableBase, IDisposable
     {
-        private readonly MusicPlayerHandler _musicPlayerHandler;
+        private readonly IMusicPlayerHandler _musicPlayerHandler;
         private IList<string> _songs;
         private string _selectedSong = null;
+        private string _currentStatus = "No song selected";
 
         public IList<string> Songs
         {
@@ -28,6 +30,12 @@ namespace MusicPlayerModule.ViewModels
             set => SetProperty(ref _selectedSong, value);
         }
 
+        public string CurrentStatus
+        {
+            get => _currentStatus;
+            set => SetProperty(ref _currentStatus, value);
+        }
+
         public DelegateCommand SelectFolderCommand { get; set; }
 
         public DelegateCommand SelectSongCommand { get; set; }
@@ -37,6 +45,7 @@ namespace MusicPlayerModule.ViewModels
             _musicPlayerHandler = new MusicPlayerHandler(player, songList);
 
             _musicPlayerHandler.ListStatusChanged += ListStatusChangedDetected;
+            _musicPlayerHandler.PlayerStatusChanged += PlayerStatusChangedDetected;
 
             Songs = _musicPlayerHandler.Songs;
 
@@ -47,6 +56,7 @@ namespace MusicPlayerModule.ViewModels
         public void Dispose()
         {
             _musicPlayerHandler.ListStatusChanged -= ListStatusChangedDetected;
+            _musicPlayerHandler.PlayerStatusChanged -= PlayerStatusChangedDetected;
             _musicPlayerHandler.Dispose();
         }
 
@@ -72,6 +82,7 @@ namespace MusicPlayerModule.ViewModels
         private void SelectSongExecute()
         {
             _musicPlayerHandler.ActiveSong = SelectedSong;
+            CurrentStatus = CreateStatusMsg();
         }
 
         private bool SelectSongCanExecute()
@@ -82,6 +93,27 @@ namespace MusicPlayerModule.ViewModels
         private void ListStatusChangedDetected(object sender, EventArgs args)
         {
             SelectFolderCommand.RaiseCanExecuteChanged();
+        }
+
+        private void PlayerStatusChangedDetected(object sender, EventArgs args)
+        {
+            CurrentStatus = CreateStatusMsg();
+        }
+
+        private string CreateStatusMsg()
+        {
+            PlayBackStatus status = _musicPlayerHandler.PlayerStatus;
+            switch (status)
+            {
+                case PlayBackStatus.Stopped:
+                    return "Stopped:";
+                case PlayBackStatus.Playing:
+                    return "Now playing:";
+                case PlayBackStatus.Paused:
+                    return "Paused:";
+                default:
+                    throw new InvalidCastException($"Unknown status: {status}");
+            }
         }
     }
 }
