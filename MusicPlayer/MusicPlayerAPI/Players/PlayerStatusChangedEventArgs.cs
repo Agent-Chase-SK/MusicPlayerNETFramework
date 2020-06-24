@@ -2,7 +2,7 @@
 
 namespace MusicPlayerAPI.Players
 {
-    internal class PlayerStatusChangedEventArgs : EventArgs
+    public class PlayerStatusChangedEventArgs : EventArgs
     {
         public PlayBackStatus Status { get; }
 

@@ -2,7 +2,7 @@
 
 namespace MusicPlayerAPI.SongList
 {
-    internal class ListStatusChangedEventArgs : EventArgs
+    public class ListStatusChangedEventArgs : EventArgs
     {
         public SongListStatus Status { get; }
 
