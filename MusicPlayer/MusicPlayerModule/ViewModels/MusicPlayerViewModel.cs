@@ -1,6 +1,7 @@
 ﻿using MusicPlayerAPI;
 using MusicPlayerAPI.Players;
 using MusicPlayerAPI.SongList;
+using MusicPlayerAPI.Util.Enums;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -17,6 +18,7 @@ namespace MusicPlayerModule.ViewModels
         private IList<string> _songs;
         private string _selectedSong = null;
         private string _currentStatus = "No song selected";
+        private string _activeSong = "";
 
         public IList<string> Songs
         {
@@ -36,9 +38,17 @@ namespace MusicPlayerModule.ViewModels
             set => SetProperty(ref _currentStatus, value);
         }
 
-        public DelegateCommand SelectFolderCommand { get; set; }
+        public string ActiveSong
+        {
+            get => _activeSong;
+            set => SetProperty(ref _activeSong, value);
+        }
 
+        public DelegateCommand SelectFolderCommand { get; set; }
         public DelegateCommand SelectSongCommand { get; set; }
+        public DelegateCommand PlayCommand { get; set; }
+        public DelegateCommand PauseCommand { get; set; }
+        public DelegateCommand StopCommand { get; set; }
 
         public MusicPlayerViewModel(IPlayer player, ISongList songList)
         {
@@ -46,17 +56,22 @@ namespace MusicPlayerModule.ViewModels
 
             _musicPlayerHandler.ListStatusChanged += ListStatusChangedDetected;
             _musicPlayerHandler.PlayerStatusChanged += PlayerStatusChangedDetected;
+            _musicPlayerHandler.ActiveSongChanged += AciveSongChangedDetected;
 
             Songs = _musicPlayerHandler.Songs;
 
             SelectFolderCommand = new DelegateCommand(SelectFolderExecute, SelectFolderCanExecute);
             SelectSongCommand = new DelegateCommand(SelectSongExecute, SelectSongCanExecute).ObservesProperty(() => SelectedSong);
+            PlayCommand = new DelegateCommand(PlayExecute, PlayPauseStopCanExecute);
+            PauseCommand = new DelegateCommand(PauseExecute, PlayPauseStopCanExecute);
+            StopCommand = new DelegateCommand(StopExecute, PlayPauseStopCanExecute);
         }
 
         public void Dispose()
         {
             _musicPlayerHandler.ListStatusChanged -= ListStatusChangedDetected;
             _musicPlayerHandler.PlayerStatusChanged -= PlayerStatusChangedDetected;
+            _musicPlayerHandler.ActiveSongChanged -= AciveSongChangedDetected;
             _musicPlayerHandler.Dispose();
         }
 
@@ -68,8 +83,7 @@ namespace MusicPlayerModule.ViewModels
 
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
                 {
-                    _musicPlayerHandler.LoadSongs(dialog.SelectedPath);
-                    Songs = _musicPlayerHandler.Songs;
+                    LoadSongs(dialog.SelectedPath);
                 }
             }
         }
@@ -81,13 +95,32 @@ namespace MusicPlayerModule.ViewModels
 
         private void SelectSongExecute()
         {
-            _musicPlayerHandler.ActiveSong = SelectedSong;
-            CurrentStatus = CreateStatusMsg();
+            SelectActiveSong();
         }
 
         private bool SelectSongCanExecute()
         {
             return SelectedSong != null;
+        }
+
+        private void PlayExecute()
+        {
+            _musicPlayerHandler.Play();
+        }
+
+        private void PauseExecute()
+        {
+            _musicPlayerHandler.Pause();
+        }
+
+        private void StopExecute()
+        {
+            _musicPlayerHandler.Stop();
+        }
+
+        private bool PlayPauseStopCanExecute()
+        {
+            return _musicPlayerHandler.ActiveSong != null;
         }
 
         private void ListStatusChangedDetected(object sender, EventArgs args)
@@ -98,6 +131,40 @@ namespace MusicPlayerModule.ViewModels
         private void PlayerStatusChangedDetected(object sender, EventArgs args)
         {
             CurrentStatus = CreateStatusMsg();
+        }
+
+        private void AciveSongChangedDetected(object sender, EventArgs args)
+        {
+            PlayCommand.RaiseCanExecuteChanged();
+            PauseCommand.RaiseCanExecuteChanged();
+            StopCommand.RaiseCanExecuteChanged();
+        }
+
+        private void LoadSongs(string path)
+        {
+            try
+            {
+                _musicPlayerHandler.LoadSongs(path);
+                Songs = _musicPlayerHandler.Songs;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void SelectActiveSong()
+        {
+            try
+            {
+                _musicPlayerHandler.ActiveSong = SelectedSong;
+                CurrentStatus = CreateStatusMsg();
+                ActiveSong = _musicPlayerHandler.ActiveSong;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private string CreateStatusMsg()
