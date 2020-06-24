@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MusicPlayerAPI
 {
-    internal interface IMusicPlayerHandler : IDisposable
+    public interface IMusicPlayerHandler : IDisposable
     {
         string ActiveSong { get; set; }
 
