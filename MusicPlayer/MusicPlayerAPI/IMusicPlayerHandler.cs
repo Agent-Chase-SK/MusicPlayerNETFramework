@@ -1,5 +1,4 @@
-﻿using MusicPlayerAPI.Players;
-using MusicPlayerAPI.SongList;
+﻿using MusicPlayerAPI.Util.Enums;
 using System;
 using System.Collections.Generic;
 

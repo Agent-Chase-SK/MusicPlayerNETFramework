@@ -1,4 +1,5 @@
 ﻿using MusicPlayerAPI.Util;
+using MusicPlayerAPI.Util.Enums;
 using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
 using System.IO;
@@ -153,7 +154,7 @@ namespace MusicPlayerAPI.Players
             }
         }
 
-        private void OnStatusChanged() => StatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(ToPlayBackStatus(AudioOutput.PlaybackState)));
+        private void OnStatusChanged() => StatusChanged?.Invoke(this, EventArgs.Empty);
 
         private PlayBackStatus ToPlayBackStatus(NAudio.Wave.PlaybackState state)
         {

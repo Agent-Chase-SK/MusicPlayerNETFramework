@@ -1,4 +1,5 @@
 ﻿using MusicPlayerAPI.Util;
+using MusicPlayerAPI.Util.Enums;
 using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,6 @@ namespace MusicPlayerAPI.SongList
             }
         }
 
-        private void OnStatusChanged() => StatusChanged?.Invoke(this, new ListStatusChangedEventArgs(Status));
+        private void OnStatusChanged() => StatusChanged?.Invoke(this, EventArgs.Empty);
     }
 }

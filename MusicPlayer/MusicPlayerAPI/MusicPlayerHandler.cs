@@ -1,6 +1,7 @@
 ﻿using MusicPlayerAPI.Players;
 using MusicPlayerAPI.SongList;
 using MusicPlayerAPI.Util;
+using MusicPlayerAPI.Util.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -113,25 +114,17 @@ namespace MusicPlayerAPI
 
         private void ListStatusChangedDetected(object sender, EventArgs args)
         {
-            if (!(args is ListStatusChangedEventArgs eventArgs))
-            {
-                throw new ArgumentException("EventArgs were null");
-            }
-            OnListStatusChanged(eventArgs.Status);
+            OnListStatusChanged();
         }
 
         private void PlayerStatusChangedDetected(object sender, EventArgs args)
         {
-            if (!(args is PlayerStatusChangedEventArgs eventArgs))
-            {
-                throw new ArgumentException("EventArgs were null");
-            }
-            OnPlayerStatusChanged(eventArgs.Status);
+            OnPlayerStatusChanged();
         }
 
-        private void OnListStatusChanged(SongListStatus status) => ListStatusChanged?.Invoke(this, new ListStatusChangedEventArgs(status));
+        private void OnListStatusChanged() => ListStatusChanged?.Invoke(this, EventArgs.Empty);
 
-        private void OnPlayerStatusChanged(PlayBackStatus status) => PlayerStatusChanged?.Invoke(this, new PlayerStatusChangedEventArgs(status));
+        private void OnPlayerStatusChanged() => PlayerStatusChanged?.Invoke(this, EventArgs.Empty);
 
         private void OnActiveSongChanged() => ActiveSongChanged?.Invoke(this, new SongChangedEventArgs(ActiveSong));
     }

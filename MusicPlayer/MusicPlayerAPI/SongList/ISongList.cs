@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicPlayerAPI.Util.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace MusicPlayerAPI.SongList

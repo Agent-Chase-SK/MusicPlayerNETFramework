@@ -1,4 +1,4 @@
-﻿namespace MusicPlayerAPI.Players
+﻿namespace MusicPlayerAPI.Util.Enums
 {
     public enum PlayBackStatus
     {

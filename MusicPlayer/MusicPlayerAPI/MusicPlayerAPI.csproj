@@ -62,8 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMusicPlayerHandler.cs" />
-    <Compile Include="Players\PlayBackStatus.cs" />
-    <Compile Include="Players\PlayerStatusChangedEventArgs.cs" />
+    <Compile Include="Util\Enums\PlayBackStatus.cs" />
     <Compile Include="SongChangedEventArgs.cs" />
     <Compile Include="MusicPlayerHandler.cs" />
     <Compile Include="Players\IPlayer.cs" />
@@ -71,12 +70,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SongList\ISongList.cs" />
     <Compile Include="SongList\SimpleRecursiveSongList.cs" />
-    <Compile Include="SongList\ListStatusChangedEventArgs.cs" />
     <Compile Include="Util\ExtensionCheckers\IExtensionChecker.cs" />
     <Compile Include="Util\ExtensionCheckers\WavMp3.cs" />
     <Compile Include="Util\IntVolume.cs" />
     <Compile Include="Util\PathChecker.cs" />
-    <Compile Include="SongList\SongListStatus.cs" />
+    <Compile Include="Util\Enums\SongListStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
