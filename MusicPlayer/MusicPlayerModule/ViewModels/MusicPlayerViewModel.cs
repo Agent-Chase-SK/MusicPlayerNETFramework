@@ -6,13 +6,11 @@ using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MusicPlayerModule.ViewModels
 {
-    class MusicPlayerViewModel : BindableBase, IDisposable
+    internal class MusicPlayerViewModel : BindableBase, IDisposable
     {
         private readonly IMusicPlayerHandler _musicPlayerHandler;
         private IList<string> _songs;
@@ -88,50 +86,23 @@ namespace MusicPlayerModule.ViewModels
             }
         }
 
-        private bool SelectFolderCanExecute()
-        {
-            return _musicPlayerHandler.ListStatus != SongListStatus.Loading;
-        }
+        private bool SelectFolderCanExecute() => _musicPlayerHandler.ListStatus != SongListStatus.Loading;
 
-        private void SelectSongExecute()
-        {
-            SelectActiveSong();
-        }
+        private void SelectSongExecute() => SelectActiveSong();
 
-        private bool SelectSongCanExecute()
-        {
-            return SelectedSong != null;
-        }
+        private bool SelectSongCanExecute() => SelectedSong != null;
 
-        private void PlayExecute()
-        {
-            _musicPlayerHandler.Play();
-        }
+        private void PlayExecute() => _musicPlayerHandler.Play();
 
-        private void PauseExecute()
-        {
-            _musicPlayerHandler.Pause();
-        }
+        private void PauseExecute() => _musicPlayerHandler.Pause();
 
-        private void StopExecute()
-        {
-            _musicPlayerHandler.Stop();
-        }
+        private void StopExecute() => _musicPlayerHandler.Stop();
 
-        private bool PlayPauseStopCanExecute()
-        {
-            return _musicPlayerHandler.ActiveSong != null;
-        }
+        private bool PlayPauseStopCanExecute() => _musicPlayerHandler.ActiveSong != null;
 
-        private void ListStatusChangedDetected(object sender, EventArgs args)
-        {
-            SelectFolderCommand.RaiseCanExecuteChanged();
-        }
+        private void ListStatusChangedDetected(object sender, EventArgs args) => SelectFolderCommand.RaiseCanExecuteChanged();
 
-        private void PlayerStatusChangedDetected(object sender, EventArgs args)
-        {
-            CurrentStatus = CreateStatusMsg();
-        }
+        private void PlayerStatusChangedDetected(object sender, EventArgs args) => CurrentStatus = CreateStatusMsg();
 
         private void AciveSongChangedDetected(object sender, EventArgs args)
         {
@@ -174,10 +145,13 @@ namespace MusicPlayerModule.ViewModels
             {
                 case PlayBackStatus.Stopped:
                     return "Stopped:";
+
                 case PlayBackStatus.Playing:
                     return "Now playing:";
+
                 case PlayBackStatus.Paused:
                     return "Paused:";
+
                 default:
                     throw new InvalidCastException($"Unknown status: {status}");
             }
