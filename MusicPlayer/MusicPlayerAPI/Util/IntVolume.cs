@@ -2,7 +2,7 @@
 
 namespace MusicPlayerAPI.Util
 {
-    public static class IntVolume
+    internal static class IntVolume
     {
         public static int ToIntVolume(float volume)
         {

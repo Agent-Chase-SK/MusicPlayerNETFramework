@@ -112,20 +112,14 @@ namespace MusicPlayerAPI
             _activeSong = song;
         }
 
-        private void ListStatusChangedDetected(object sender, EventArgs args)
-        {
-            OnListStatusChanged();
-        }
+        private void ListStatusChangedDetected(object sender, EventArgs args) => OnListStatusChanged();
 
-        private void PlayerStatusChangedDetected(object sender, EventArgs args)
-        {
-            OnPlayerStatusChanged();
-        }
+        private void PlayerStatusChangedDetected(object sender, EventArgs args) => OnPlayerStatusChanged();
 
         private void OnListStatusChanged() => ListStatusChanged?.Invoke(this, EventArgs.Empty);
 
         private void OnPlayerStatusChanged() => PlayerStatusChanged?.Invoke(this, EventArgs.Empty);
 
-        private void OnActiveSongChanged() => ActiveSongChanged?.Invoke(this, new SongChangedEventArgs(ActiveSong));
+        private void OnActiveSongChanged() => ActiveSongChanged?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -4,7 +4,7 @@ using System.Security;
 
 namespace MusicPlayerAPI.Util
 {
-    public static class PathChecker
+    internal static class PathChecker
     {
         public static bool IsPathValid(string path)
         {

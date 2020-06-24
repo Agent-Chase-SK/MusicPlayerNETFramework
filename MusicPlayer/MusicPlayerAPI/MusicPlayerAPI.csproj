@@ -63,7 +63,6 @@
   <ItemGroup>
     <Compile Include="IMusicPlayerHandler.cs" />
     <Compile Include="Util\Enums\PlayBackStatus.cs" />
-    <Compile Include="SongChangedEventArgs.cs" />
     <Compile Include="MusicPlayerHandler.cs" />
     <Compile Include="Players\IPlayer.cs" />
     <Compile Include="Players\NAudioPlayer.cs" />
