@@ -6,6 +6,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MusicPlayerModule.ViewModels
@@ -21,7 +22,14 @@ namespace MusicPlayerModule.ViewModels
         public IList<string> Songs
         {
             get => _songs;
-            set => SetProperty(ref _songs, value);
+            private set
+            {
+                if (!value.SequenceEqual(_musicPlayerHandler.Songs))
+                {
+                    throw new InvalidOperationException("New value not equal to actual song list");
+                }
+                SetProperty(ref _songs, value);
+            }
         }
 
         public string SelectedSong
@@ -33,13 +41,20 @@ namespace MusicPlayerModule.ViewModels
         public string CurrentStatus
         {
             get => _currentStatus;
-            set => SetProperty(ref _currentStatus, value);
+            private set => SetProperty(ref _currentStatus, value);
         }
 
         public string ActiveSong
         {
             get => _activeSong;
-            set => SetProperty(ref _activeSong, value);
+            private set
+            {
+                if (value != _musicPlayerHandler.ActiveSong)
+                {
+                    throw new InvalidOperationException("New value not equal to actual active song");
+                }
+                SetProperty(ref _activeSong, value);
+            }
         }
 
         public DelegateCommand SelectFolderCommand { get; set; }
@@ -100,7 +115,14 @@ namespace MusicPlayerModule.ViewModels
 
         private bool PlayPauseStopCanExecute() => _musicPlayerHandler.ActiveSong != null;
 
-        private void ListStatusChangedDetected(object sender, EventArgs args) => SelectFolderCommand.RaiseCanExecuteChanged();
+        private void ListStatusChangedDetected(object sender, EventArgs args)
+        {
+            SelectFolderCommand.RaiseCanExecuteChanged();
+            if (_musicPlayerHandler.ListStatus == SongListStatus.Loaded)
+            {
+                Songs = _musicPlayerHandler.Songs;
+            }
+        }
 
         private void PlayerStatusChangedDetected(object sender, EventArgs args) => CurrentStatus = CreateStatusMsg();
 
@@ -116,7 +138,6 @@ namespace MusicPlayerModule.ViewModels
             try
             {
                 _musicPlayerHandler.LoadSongs(path);
-                Songs = _musicPlayerHandler.Songs;
             }
             catch (Exception e)
             {
