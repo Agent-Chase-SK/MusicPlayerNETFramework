@@ -122,6 +122,10 @@ namespace MusicPlayerModule.ViewModels
             {
                 Songs = _musicPlayerHandler.Songs;
             }
+            if (_musicPlayerHandler.ListStatus == SongListStatus.LoadError)
+            {
+                MessageBox.Show("Failed to load song list");
+            }
         }
 
         private void PlayerStatusChangedDetected(object sender, EventArgs args) => CurrentStatus = CreateStatusMsg();
