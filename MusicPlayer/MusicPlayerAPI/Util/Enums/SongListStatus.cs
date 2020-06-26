@@ -4,6 +4,7 @@
     {
         NoSelectedFolder,
         Loading,
-        Loaded
+        Loaded,
+        LoadError
     }
 }

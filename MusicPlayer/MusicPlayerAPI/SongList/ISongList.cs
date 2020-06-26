@@ -14,6 +14,6 @@ namespace MusicPlayerAPI.SongList
 
         event EventHandler StatusChanged;
 
-        bool LoadSongs(string path);
+        void LoadSongs(string path);
     }
 }

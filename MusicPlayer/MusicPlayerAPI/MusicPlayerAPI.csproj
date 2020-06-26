@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMusicPlayerHandler.cs" />
+    <Compile Include="SongList\AsyncRecursiveSongList.cs" />
     <Compile Include="Util\Enums\PlayBackStatus.cs" />
     <Compile Include="MusicPlayerHandler.cs" />
     <Compile Include="Players\IPlayer.cs" />

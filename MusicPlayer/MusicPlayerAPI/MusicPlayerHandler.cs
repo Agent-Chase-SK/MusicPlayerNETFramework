@@ -14,6 +14,7 @@ namespace MusicPlayerAPI
         private readonly IPlayer _player;
         private readonly ISongList _songList;
         private string _activeSong;
+        private IDictionary<string, string> _songs;
 
         public string ActiveSong
         {
@@ -27,7 +28,7 @@ namespace MusicPlayerAPI
 
         public IList<string> Songs
         {
-            get => _songList.Songs.Keys.OrderBy(key => key).ToList();
+            get => _songs.Keys.OrderBy(key => key).ToList();
         }
 
         public SongListStatus ListStatus
@@ -69,6 +70,9 @@ namespace MusicPlayerAPI
             }
             _player = player;
             _songList = songList;
+
+            _songs = _songList.Songs;
+
             _songList.StatusChanged += ListStatusChangedDetected;
             _player.StatusChanged += PlayerStatusChangedDetected;
         }
@@ -86,10 +90,7 @@ namespace MusicPlayerAPI
             {
                 throw new ArgumentException($"{path} is invalid path");
             }
-            if (!_songList.LoadSongs(path))
-            {
-                throw new IOException("Failed to load songs");
-            }
+            _songList.LoadSongs(path);
         }
 
         public void Play() => _player.Play();
@@ -100,19 +101,25 @@ namespace MusicPlayerAPI
 
         private void SelectSong(string song)
         {
-            IDictionary<string, string> songList = _songList.Songs;
-            if (!songList.ContainsKey(song))
+            if (!_songs.ContainsKey(song))
             {
                 throw new ArgumentException($"Song: {song} not in list");
             }
-            if (!_player.LoadMusicFile(songList[song]))
+            if (!_player.LoadMusicFile(_songs[song]))
             {
                 throw new IOException($"Failed to load song: {song}");
             }
             _activeSong = song;
         }
 
-        private void ListStatusChangedDetected(object sender, EventArgs args) => OnListStatusChanged();
+        private void ListStatusChangedDetected(object sender, EventArgs args)
+        {
+            if (_songList.Status == SongListStatus.Loaded)
+            {
+                _songs = _songList.Songs;
+            }
+            OnListStatusChanged();
+        }
 
         private void PlayerStatusChangedDetected(object sender, EventArgs args) => OnPlayerStatusChanged();
 

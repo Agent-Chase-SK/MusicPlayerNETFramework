@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 
 namespace MusicPlayerAPI.SongList
@@ -12,13 +13,13 @@ namespace MusicPlayerAPI.SongList
     public class SimpleRecursiveSongList : ISongList
     {
         private SongListStatus _status;
-        private IDictionary<string, string> _songList = new Dictionary<string, string>();
+        private IDictionary<string, string> _songs = new Dictionary<string, string>();
         private readonly IExtensionChecker _extensionChecker = new WavMp3();
 
         public SongListStatus Status
         {
             get => _status;
-            private set
+            protected set
             {
                 _status = value;
                 OnStatusChanged();
@@ -27,7 +28,15 @@ namespace MusicPlayerAPI.SongList
 
         public IDictionary<string, string> Songs
         {
-            get => _songList.ToImmutableDictionary();
+            get
+            {
+                if (Status == SongListStatus.Loading)
+                {
+                    throw new InvalidOperationException("List is loading");
+                }
+                return _songs.ToImmutableDictionary();
+            }
+            protected set => _songs = value;
         }
 
         public string[] SupportedExtensions
@@ -39,45 +48,63 @@ namespace MusicPlayerAPI.SongList
 
         public SimpleRecursiveSongList() => Status = SongListStatus.NoSelectedFolder;
 
-        public bool LoadSongs(string path)
+        public void LoadSongs(string path)
         {
-            if (!PathChecker.IsPathValid(path))
-            {
-                return false;
-            }
+            CheckBeforeLoading(path);
             Status = SongListStatus.Loading;
-            if (_songList.Count != 0)
+            if (_songs.Count != 0)
             {
-                _songList = new Dictionary<string, string>();
+                _songs = new Dictionary<string, string>();
             }
+            StartRecSearch(path);
+        }
+
+        protected virtual void StartRecSearch(string path)
+        {
             try
             {
                 RecDirSearch(path);
             }
             catch (Exception)
             {
-                _songList = new Dictionary<string, string>();
-                Status = SongListStatus.NoSelectedFolder;
-                return false;
+                Status = SongListStatus.LoadError;
+                Songs = new Dictionary<string, string>();
+                return;
             }
             Status = SongListStatus.Loaded;
-            return true;
         }
 
-        private void RecDirSearch(string dirPath)
+        protected void RecDirSearch(string dirPath)
         {
             foreach (string file in Directory.GetFiles(dirPath))
             {
                 if (_extensionChecker.IsSupportedExtension(file))
                 {
-                    string title = Regex.Replace(Path.GetFileNameWithoutExtension(file), @"[^\u0000-\u007F]+", string.Empty);
-                    _songList.Add(title, file);
+                    string title = UtfOnlyChars(Path.GetFileNameWithoutExtension(file));
+                    _songs.Add(title, file);
                 }
             }
             foreach (string dir in Directory.GetDirectories(dirPath))
             {
                 RecDirSearch(dir);
             }
+        }
+
+        private void CheckBeforeLoading(string path)
+        {
+            if (Status == SongListStatus.Loading)
+            {
+                throw new InvalidOperationException("List is loading");
+            }
+            if (!PathChecker.IsPathValid(path))
+            {
+                throw new ArgumentException("Path is invalid");
+            }
+        }
+
+        private string UtfOnlyChars(string text)
+        {
+            return Regex.Replace(text, @"[^\u0000-\u007F]+", string.Empty);
         }
 
         private void OnStatusChanged() => StatusChanged?.Invoke(this, EventArgs.Empty);
