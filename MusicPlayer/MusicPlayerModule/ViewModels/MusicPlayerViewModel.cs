@@ -89,6 +89,9 @@ namespace MusicPlayerModule.ViewModels
             PlayCommand = new DelegateCommand(PlayExecute, PlayPauseStopCanExecute);
             PauseCommand = new DelegateCommand(PauseExecute, PlayPauseStopCanExecute);
             StopCommand = new DelegateCommand(StopExecute, PlayPauseStopCanExecute);
+
+            //Tmp
+            LagCmd = new DelegateCommand(LagExecute, () => true);
         }
 
         public void Dispose()
@@ -202,6 +205,20 @@ namespace MusicPlayerModule.ViewModels
                 _musicPlayerHandler.Volume = volume;
             }
             catch (InvalidOperationException) { }
+        }
+
+        //TMP
+        public DelegateCommand LagCmd { get; set; }
+        private void LagExecute()
+        {
+            Slow();
+        }
+        private void Slow()
+        {
+            var end = DateTime.Now + TimeSpan.FromSeconds(10);
+            while (DateTime.Now < end)
+            {
+            }
         }
     }
 }
