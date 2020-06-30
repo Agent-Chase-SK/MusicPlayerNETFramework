@@ -168,6 +168,7 @@ namespace MusicPlayerModule.ViewModels
                 CurrentStatus = CreateStatusMsg();
                 ActiveSong = _musicPlayerHandler.ActiveSong;
                 TrySetVolume(Volume);
+                _musicPlayerHandler.Play();
             }
             catch (Exception e)
             {
