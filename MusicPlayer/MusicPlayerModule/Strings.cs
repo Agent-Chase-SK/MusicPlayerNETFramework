@@ -7,5 +7,6 @@
         public static readonly string PlayButton = "Play";
         public static readonly string PauseButton = "Pause";
         public static readonly string StopButton = "Stop";
+        public static readonly string VolumeLabel = "Volume";
     }
 }

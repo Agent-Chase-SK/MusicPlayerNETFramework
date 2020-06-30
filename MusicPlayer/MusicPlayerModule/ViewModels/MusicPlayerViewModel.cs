@@ -18,6 +18,7 @@ namespace MusicPlayerModule.ViewModels
         private string _selectedSong = null;
         private string _currentStatus = "No song selected";
         private string _activeSong = "";
+        private int _volume = 50;
 
         public IList<string> Songs
         {
@@ -54,6 +55,16 @@ namespace MusicPlayerModule.ViewModels
                     throw new InvalidOperationException("New value not equal to actual active song");
                 }
                 SetProperty(ref _activeSong, value);
+            }
+        }
+
+        public int Volume
+        {
+            get => _volume;
+            set
+            {
+                SetProperty(ref _volume, value);
+                TrySetVolume(_volume);
             }
         }
 
@@ -156,6 +167,7 @@ namespace MusicPlayerModule.ViewModels
                 _musicPlayerHandler.ActiveSong = SelectedSong;
                 CurrentStatus = CreateStatusMsg();
                 ActiveSong = _musicPlayerHandler.ActiveSong;
+                TrySetVolume(Volume);
             }
             catch (Exception e)
             {
@@ -180,6 +192,15 @@ namespace MusicPlayerModule.ViewModels
                 default:
                     throw new InvalidCastException($"Unknown status: {status}");
             }
+        }
+
+        private void TrySetVolume(int volume)
+        {
+            try
+            {
+                _musicPlayerHandler.Volume = volume;
+            }
+            catch (InvalidOperationException) { }
         }
     }
 }
