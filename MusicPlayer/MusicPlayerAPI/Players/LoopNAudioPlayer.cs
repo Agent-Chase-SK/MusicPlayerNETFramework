@@ -101,11 +101,10 @@ namespace MusicPlayerAPI.Players
 
         private class LoopPlayer : IDisposable
         {
-            private const int LoopSleepMsTime = 100;
-
             private bool _terminateLoop;
             private readonly IPlayer _player;
             private readonly LoopNAudioPlayer _loopNAudioPlayer;
+            private ManualResetEvent _resetEvent;
             private Queue<PlayerActionEventArgs> actionQueue = new Queue<PlayerActionEventArgs>();
 
             internal event EventHandler StatusChanged;
@@ -115,6 +114,7 @@ namespace MusicPlayerAPI.Players
                 _terminateLoop = false;
                 _player = player;
                 _loopNAudioPlayer = loopNAudioPlayer;
+                _resetEvent = new ManualResetEvent(false);
 
                 _player.StatusChanged += StatusChangedDetected;
                 _loopNAudioPlayer.ActionRequest += ActionRequestDetected;
@@ -133,8 +133,12 @@ namespace MusicPlayerAPI.Players
             {
                 while (!_terminateLoop)
                 {
+                    _resetEvent.WaitOne();
                     HandleRequest();
-                    Thread.Sleep(LoopSleepMsTime);
+                    if (actionQueue.Count == 0)
+                    {
+                        _resetEvent.Reset();
+                    }
                 }
             }
 
@@ -180,8 +184,17 @@ namespace MusicPlayerAPI.Players
             {
                 if (volume != null)
                 {
-                    _player.Volume = (float)volume;
+                    TrySetVolume((float)volume);
                 }
+            }
+
+            private void TrySetVolume(float volume)
+            {
+                try
+                {
+                    _player.Volume = volume;
+                }
+                catch (InvalidOperationException) { }
             }
 
             private void OnStatusChanged()
@@ -196,6 +209,7 @@ namespace MusicPlayerAPI.Players
                     throw new ArgumentException("EventArgs were null");
                 }
                 actionQueue.Enqueue(new PlayerActionEventArgs(eventArgs.ActionType, eventArgs.Path, eventArgs.Volume));
+                _resetEvent.Set();
             }
 
             private void StatusChangedDetected(object sender, EventArgs args)
