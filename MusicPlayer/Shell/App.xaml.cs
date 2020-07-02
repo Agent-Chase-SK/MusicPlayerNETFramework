@@ -20,7 +20,7 @@ namespace Shell
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IPlayer, NAudioPlayer>();
+            containerRegistry.RegisterSingleton<IPlayer, LoopNAudioPlayer>();
             containerRegistry.RegisterSingleton<ISongList, AsyncRecursiveSongList>();
 
             containerRegistry.RegisterForNavigation<MusicPlayerView>();
