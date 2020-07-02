@@ -209,10 +209,12 @@ namespace MusicPlayerModule.ViewModels
 
         //TMP
         public DelegateCommand LagCmd { get; set; }
+
         private void LagExecute()
         {
             Slow();
         }
+
         private void Slow()
         {
             var end = DateTime.Now + TimeSpan.FromSeconds(10);

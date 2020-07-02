@@ -29,7 +29,7 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="5" HorizontalAlignment="Center" FontWeight="Bold" Text="{Binding CurrentStatus}" />
@@ -38,11 +38,11 @@
             <Button Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Margin="5" Content="{x:Static musicPlayerModule:Strings.PlayButton}" Command="{Binding PlayCommand}" />
             <Button Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Margin="5" Content="{x:Static musicPlayerModule:Strings.PauseButton}" Command="{Binding PauseCommand}" />
             <Button Grid.Column="2" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Margin="5" Content="{x:Static musicPlayerModule:Strings.StopButton}" Command="{Binding StopCommand}" />
-            <TextBlock Grid.Column="0" Grid.Row="4" Margin="5" HorizontalAlignment="Right" Text="{x:Static musicPlayerModule:Strings.VolumeLabel}"/>
-            <Slider Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" Margin="5" Minimum="0" Maximum="100" Value="{Binding Volume}"/>
+            <TextBlock Grid.Column="0" Grid.Row="4" Margin="5" HorizontalAlignment="Right" Text="{x:Static musicPlayerModule:Strings.VolumeLabel}" />
+            <Slider Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" Margin="5" Minimum="0" Maximum="100" Value="{Binding Volume}" />
 
             <!--TMP-->
-            <Button Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Content="Lag" Command="{Binding LagCmd}"/>
+            <Button Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Content="Lag" Command="{Binding LagCmd}" />
         </Grid>
 
         <Grid Grid.Column="1">
