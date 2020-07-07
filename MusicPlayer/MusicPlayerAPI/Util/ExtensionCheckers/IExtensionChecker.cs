@@ -1,6 +1,6 @@
 ﻿namespace MusicPlayerAPI.Util.ExtensionCheckers
 {
-    internal interface IExtensionChecker
+    public interface IExtensionChecker
     {
         bool IsSupportedExtension(string path);
 

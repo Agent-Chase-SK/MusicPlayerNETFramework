@@ -1,4 +1,5 @@
 ﻿using MusicPlayerAPI.Util.Enums;
+using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
 using System.Collections.Generic;
 
@@ -8,9 +9,9 @@ namespace MusicPlayerAPI.SongList
     {
         IDictionary<string, string> Songs { get; }
 
-        string[] SupportedExtensions { get; }
-
         SongListStatus Status { get; }
+
+        IExtensionChecker ExtensionChecker { get; set; }
 
         event EventHandler StatusChanged;
 

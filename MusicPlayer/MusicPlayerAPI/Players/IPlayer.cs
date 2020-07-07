@@ -1,4 +1,5 @@
 ﻿using MusicPlayerAPI.Util.Enums;
+using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
 
 namespace MusicPlayerAPI.Players
@@ -7,9 +8,9 @@ namespace MusicPlayerAPI.Players
     {
         float Volume { get; set; }
 
-        string[] SupportedExtensions { get; }
-
         PlayBackStatus Status { get; }
+
+        IExtensionChecker ExtensionChecker { get; }
 
         event EventHandler StatusChanged;
 

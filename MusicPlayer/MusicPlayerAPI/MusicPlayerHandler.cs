@@ -49,7 +49,7 @@ namespace MusicPlayerAPI
 
         public string[] SupportedExtensions
         {
-            get => _player.SupportedExtensions;
+            get => _player.ExtensionChecker.GetSuportedExtensions();
         }
 
         public event EventHandler ListStatusChanged;
@@ -64,12 +64,9 @@ namespace MusicPlayerAPI
             {
                 throw new ArgumentException("Must provide implementations");
             }
-            if (!player.SupportedExtensions.SequenceEqual(songList.SupportedExtensions))
-            {
-                throw new ArgumentException("Implementations incompatibile");
-            }
             _player = player;
             _songList = songList;
+            _songList.ExtensionChecker = _player.ExtensionChecker;
 
             _songs = _songList.Songs;
 
