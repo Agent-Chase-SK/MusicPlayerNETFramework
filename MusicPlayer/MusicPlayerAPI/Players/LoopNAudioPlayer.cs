@@ -1,7 +1,9 @@
 ﻿using MusicPlayerAPI.Util;
 using MusicPlayerAPI.Util.Enums;
 using MusicPlayerAPI.Util.EventArguments;
+using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,8 +26,6 @@ namespace MusicPlayerAPI.Players
             }
         }
 
-        public string[] SupportedExtensions { get; private set; }
-
         public PlayBackStatus Status
         {
             get => _status;
@@ -33,6 +33,14 @@ namespace MusicPlayerAPI.Players
             {
                 _status = value;
                 OnStatusChanged();
+            }
+        }
+
+        public IExtensionChecker ExtensionChecker
+        {
+            get
+            {
+                return new WavMp3();
             }
         }
 
@@ -105,7 +113,7 @@ namespace MusicPlayerAPI.Players
             private readonly IPlayer _player;
             private readonly LoopNAudioPlayer _loopNAudioPlayer;
             private ManualResetEvent _resetEvent;
-            private Queue<PlayerActionEventArgs> actionQueue = new Queue<PlayerActionEventArgs>();
+            private ConcurrentQueue<PlayerActionEventArgs> actionQueue = new ConcurrentQueue<PlayerActionEventArgs>();
 
             internal event EventHandler StatusChanged;
 
@@ -118,8 +126,6 @@ namespace MusicPlayerAPI.Players
 
                 _player.StatusChanged += StatusChangedDetected;
                 _loopNAudioPlayer.ActionRequest += ActionRequestDetected;
-
-                _loopNAudioPlayer.SupportedExtensions = _player.SupportedExtensions;
             }
 
             public void Dispose()
@@ -144,11 +150,11 @@ namespace MusicPlayerAPI.Players
 
             private void HandleRequest()
             {
-                if (actionQueue.Count == 0)
+                PlayerActionEventArgs currentActionArgs;
+                if (!actionQueue.TryDequeue(out currentActionArgs))
                 {
                     return;
                 }
-                PlayerActionEventArgs currentActionArgs = actionQueue.Dequeue();
                 switch (currentActionArgs.ActionType)
                 {
                     case PlayerActionType.Load:

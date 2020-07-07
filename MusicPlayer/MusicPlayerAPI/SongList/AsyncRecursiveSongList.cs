@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MusicPlayerAPI.SongList
 {
-    public class AsyncRecursiveSongList : BaseRecursiveSongList
+    public class AsyncRecursiveSongList : BaseRecursiveSongList //add status synchronization
     {
         public AsyncRecursiveSongList() => Songs = new ConcurrentDictionary<string, string>();
 
