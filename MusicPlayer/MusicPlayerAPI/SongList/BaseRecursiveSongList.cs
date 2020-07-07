@@ -15,7 +15,7 @@ namespace MusicPlayerAPI.SongList
         protected IDictionary<string, string> _songs;
         private IExtensionChecker _extensionChecker;
 
-        public SongListStatus Status
+        public virtual SongListStatus Status
         {
             get => _status;
             protected set
