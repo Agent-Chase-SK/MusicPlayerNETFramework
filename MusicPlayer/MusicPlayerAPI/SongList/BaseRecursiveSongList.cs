@@ -83,10 +83,7 @@ namespace MusicPlayerAPI.SongList
             }
         }
 
-        protected string UtfOnlyChars(string text)
-        {
-            return Regex.Replace(text, @"[^\u0000-\u007F]+", string.Empty);
-        }
+        protected string UtfOnlyChars(string text) => Regex.Replace(text, @"[^\u0000-\u007F]+", string.Empty);
 
         private void OnStatusChanged() => StatusChanged?.Invoke(this, EventArgs.Empty);
     }

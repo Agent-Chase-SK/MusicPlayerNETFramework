@@ -4,7 +4,6 @@ using MusicPlayerAPI.Util.EventArguments;
 using MusicPlayerAPI.Util.ExtensionCheckers;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -112,8 +111,8 @@ namespace MusicPlayerAPI.Players
             private bool _terminateLoop;
             private readonly IPlayer _player;
             private readonly LoopNAudioPlayer _loopNAudioPlayer;
-            private ManualResetEvent _resetEvent;
-            private ConcurrentQueue<PlayerActionEventArgs> actionQueue = new ConcurrentQueue<PlayerActionEventArgs>();
+            private readonly ManualResetEvent _resetEvent;
+            private readonly ConcurrentQueue<PlayerActionEventArgs> actionQueue = new ConcurrentQueue<PlayerActionEventArgs>();
 
             internal event EventHandler StatusChanged;
 
@@ -150,8 +149,7 @@ namespace MusicPlayerAPI.Players
 
             private void HandleRequest()
             {
-                PlayerActionEventArgs currentActionArgs;
-                if (!actionQueue.TryDequeue(out currentActionArgs))
+                if (!actionQueue.TryDequeue(out PlayerActionEventArgs currentActionArgs))
                 {
                     return;
                 }

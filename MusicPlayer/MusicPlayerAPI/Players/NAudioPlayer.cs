@@ -53,9 +53,9 @@ namespace MusicPlayerAPI.Players
             get => ToPlayBackStatus(AudioOutput.PlaybackState);
         }
 
-        public string[] SupportedExtensions
+        public IExtensionChecker ExtensionChecker
         {
-            get => _extensionChecker.GetSuportedExtensions();
+            get => new WavMp3();
         }
 
         public event EventHandler StatusChanged;
