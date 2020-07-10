@@ -115,6 +115,17 @@ namespace MusicPlayerAPI.Players
 
             internal event EventHandler StatusChanged;
 
+            private PlayBackStatus Status
+            {
+                get
+                {
+                    lock (this)
+                    {
+                        return _player.Status;
+                    }
+                }
+            }
+
             public LoopPlayer(LoopNAudioPlayer loopNAudioPlayer, IPlayer player)
             {
                 _terminateLoop = false;
@@ -205,7 +216,7 @@ namespace MusicPlayerAPI.Players
 
             private void OnStatusChanged()
             {
-                StatusChanged?.Invoke(this, new PlayerStatusEventArgs(_player.Status));
+                StatusChanged?.Invoke(this, new PlayerStatusEventArgs(Status));
             }
 
             private void ActionRequestDetected(object sender, EventArgs args)
