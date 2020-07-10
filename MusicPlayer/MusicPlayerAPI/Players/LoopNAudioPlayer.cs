@@ -58,7 +58,6 @@ namespace MusicPlayerAPI.Players
         public void Dispose()
         {
             _loopPlayer.StatusChanged -= StatusChangedDetected;
-            OnActionRequest(PlayerActionType.TerminateLoop);
             _loopPlayer.Dispose();
         }
 
@@ -112,7 +111,7 @@ namespace MusicPlayerAPI.Players
             private readonly IPlayer _player;
             private readonly LoopNAudioPlayer _loopNAudioPlayer;
             private readonly ManualResetEvent _resetEvent;
-            private readonly ConcurrentQueue<PlayerActionEventArgs> actionQueue = new ConcurrentQueue<PlayerActionEventArgs>();
+            private readonly ConcurrentQueue<PlayerActionEventArgs> actionQueue;
 
             internal event EventHandler StatusChanged;
 
@@ -122,6 +121,7 @@ namespace MusicPlayerAPI.Players
                 _player = player;
                 _loopNAudioPlayer = loopNAudioPlayer;
                 _resetEvent = new ManualResetEvent(false);
+                actionQueue = new ConcurrentQueue<PlayerActionEventArgs>();
 
                 _player.StatusChanged += StatusChangedDetected;
                 _loopNAudioPlayer.ActionRequest += ActionRequestDetected;
@@ -129,9 +129,7 @@ namespace MusicPlayerAPI.Players
 
             public void Dispose()
             {
-                _player.StatusChanged -= StatusChangedDetected;
-                _loopNAudioPlayer.ActionRequest -= ActionRequestDetected;
-                _player.Dispose();
+                _terminateLoop = true;
             }
 
             public void RunLoop()
@@ -145,6 +143,14 @@ namespace MusicPlayerAPI.Players
                         _resetEvent.Reset();
                     }
                 }
+                DisposeInThread();
+            }
+
+            private void DisposeInThread()
+            {
+                _player.StatusChanged -= StatusChangedDetected;
+                _loopNAudioPlayer.ActionRequest -= ActionRequestDetected;
+                _player.Dispose();
             }
 
             private void HandleRequest()
@@ -173,10 +179,6 @@ namespace MusicPlayerAPI.Players
 
                     case PlayerActionType.SetVolume:
                         SetVolume(currentActionArgs.Volume);
-                        break;
-
-                    case PlayerActionType.TerminateLoop:
-                        _terminateLoop = true;
                         break;
 
                     default:

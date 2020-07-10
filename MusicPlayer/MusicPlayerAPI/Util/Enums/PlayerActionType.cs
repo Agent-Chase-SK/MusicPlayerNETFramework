@@ -6,7 +6,6 @@
         Play,
         Pause,
         Stop,
-        SetVolume,
-        TerminateLoop
+        SetVolume
     }
 }
