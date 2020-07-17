@@ -40,9 +40,6 @@
             <Button Grid.Column="2" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Margin="5" Content="{x:Static musicPlayerModule:Strings.StopButton}" Command="{Binding StopCommand}" />
             <TextBlock Grid.Column="0" Grid.Row="4" Margin="5" HorizontalAlignment="Right" Text="{x:Static musicPlayerModule:Strings.VolumeLabel}" />
             <Slider Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" Margin="5" Minimum="0" Maximum="100" Value="{Binding Volume}" />
-
-            <!--TMP-->
-            <Button Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Content="Lag" Command="{Binding LagCmd}" />
         </Grid>
 
         <Grid Grid.Column="1">
